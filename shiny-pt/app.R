@@ -1,3 +1,12 @@
+# This is a Shiny web application. You can run the application by clicking
+# the 'Run App' button above.
+#
+# Find out more about building applications with Shiny here:
+#
+# http://shiny.rstudio.com/
+
+library(shiny)
+
 library(httr)
 library(knitr)
 library(dplyr)
@@ -73,4 +82,40 @@ get_most_viewed <- function(section = "all-sections", time_period = 1, iteration
   }
   return (results_json)
 }
+
+# Define UI for application
+ui <- shinyUI(fluidPage(
+  titlePanel("Little Assistant"),
+  hr(),
+  fluidRow(
+    column(6, h4("How long's it been since you've been away?"),
+      selectInput("select", label = h5("Please select an option from the list below."),
+                  choices = list("1 day" = 1, "1 week" = 7, "1 month" = 30),
+                  selected = 1)),
+    column(6, h4("What type of articles do you want to focus on?"),
+      selectInput("filter", label = h5("Please select an option from the list below."),
+                  choices = list("All Sections" = 1, "World" = 2, "Politics" = 3),
+                  selected = 1))
+  ),
+  hr(),
+  fluidRow(
+    column(12, h4("timeline will go here"))
+  ),
+  hr(),
+  mainPanel(
+    h3("table will go here"),
+    tableOutput('table')
+  )
+  
+))
+
+# Define server logic
+server <- shinyServer(function(input, output) {
+  output$text1 <- renderText({ 
+    paste("You have selected", input$select)
+  })
+})
+
+# Run the application 
+shinyApp(ui, server)
 
