@@ -109,9 +109,7 @@ server <- shinyServer(function(input, output) {
     input$select
   })
   
-  tmp=sample(1,c(1,7,30))
-  tmp=3
-  
+  tmp=1
   if(tmp == 1) {
     articles <- get_most_viewed("all-sections",1,5) %>% 
       select(section, title, by, url, keywords, abstract, published_date, views) %>%
@@ -148,7 +146,6 @@ server <- shinyServer(function(input, output) {
                      mode="markers", color = section, size = s) %>% 
                         layout(xaxis = x, yaxis = y)
   output$plot = renderPlotly(my.plot)
-    
 })
 
 # Run the application 
