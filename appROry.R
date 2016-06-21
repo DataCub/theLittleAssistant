@@ -4,6 +4,7 @@ library(dplyr)
 library(tidyjson)
 library(data.table)
 library(knitr)
+library(DT)
 
 
 nyt_most_popular_api <- "a1001f5ad4ae4e07946c944b19f2ea01"
@@ -14,7 +15,7 @@ get_most_viewed <- function(section = "all-sections", time_period = 1, iteration
     offset <- i * 20
     
     # construct the URI
-    uri_base <- paste0("http://api.nytimes.com/svc/mostpopular/v2/mostviewed/", section, "/", time_period)
+    uri_base <- paste0("http://api.nytimes.com/svc/mostpopular/v2/mostviewed/",section, "/", time_period)
     uri_base <- paste0(uri_base, ".json?offset=", offset)
     uri      <- paste0(uri_base,"&api-key=", nyt_most_popular_api)
     
@@ -84,7 +85,7 @@ ui <- fluidPage(
                             c("one day" = 1, "one week" = 7, "one month" = 30)),
                 selectInput(inputId = "section", label = "What would you like to catch up on?",
                             c("all-sections" = "all-sections", "World" = "World", 
-                              "U.S" = "U.S", "Travel" = "Travel", "The Upshot" = "The Upshot",
+                              "U.S." = "U.S.", "Travel" = "Travel", "The Upshot" = "The Upshot",
                               "Technology" = "Technology", "Style" = "Style", "Sports" = "Sports", 
                               "Science" = "Science", "Opinion" = "Opinion", "N.Y. / Region" = "N.Y. / Region",
                                "Movies" = "Movies", "Magazine" = "Magazine", "Health" = "Health", 
@@ -95,6 +96,8 @@ ui <- fluidPage(
 server <- function(input, output) {
   output$tbl = DT::renderDataTable(get_most_viewed(
     section = input$section, time_period = input$time), escape = FALSE, options = list(lengthChange = FALSE))
+    tmp=1
+  
 }
 
 shinyApp(ui = ui, server = server)
