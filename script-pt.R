@@ -76,13 +76,14 @@ get_most_viewed <- function(section = "all-sections", time_period = 1, iteration
   return (results_json)
 }
 
-g <- get_most_viewed("all-sections",7,2) %>% 
+articles <- get_most_viewed("all-sections",30,5) %>% 
   select(section, title, by, url, keywords, abstract, published_date, views) %>%
     data.frame
 
-g$published_date <- as.Date(g$published_date)
-date.diff <- c(as.numeric(diff(g$published_date)),0)
-g <- filter(g, date.diff >= -30)
+articles$published_date <- as.Date(articles$published_date)
+today <- as.Date(Sys.Date())
+date.diff <- today - articles$published_date
+articles <- filter(articles, date.diff <= 30)
 
 x <- list(
   title = "Published (Date)"
@@ -90,6 +91,7 @@ x <- list(
 y <- list(
   title = "Views (Count)"
 )
-
-plot_ly(g, x = published_date, y = views, text = title,
-        mode = "markers", color = section) %>% layout(xaxis = x, yaxis = y)
+s <- rep(1,100)
+plot_ly(articles, x = published_date, y = views, text = title, 
+        mode="markers", color = section, size=s) %>% 
+          layout(xaxis = x, yaxis = y)
