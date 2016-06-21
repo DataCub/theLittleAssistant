@@ -26,7 +26,6 @@ get_most_viewed <- function(section = "all-sections", time_period = 1, iteration
     # store the json
     json_raw <- httr::content(raw_contents, type = "text", encoding = "UTF-8")
     
-    
     ## get status
     json_raw %>% enter_object("status") %>%
       append_values_string("status") %>% select(status)
