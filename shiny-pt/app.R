@@ -1,10 +1,18 @@
+# This is a Shiny web application. You can run the application by clicking
+# the 'Run App' button above.
+#
+# Find out more about building applications with Shiny here:
+#
+# http://shiny.rstudio.com/
+
+library(shiny)
+
 library(httr)
 library(knitr)
 library(dplyr)
-library(plotly)
 library(ggplot2)
-library(tidyjson)
 library(timeline)
+library(tidyjson)
 library(data.table)
 
 # rm(list = ls())
@@ -76,22 +84,46 @@ get_most_viewed <- function(section = "all-sections", time_period = 1, iteration
   return (results_json)
 }
 
-articles <- get_most_viewed("all-sections",30,5) %>% 
-  select(section, title, by, url, keywords, abstract, published_date, views) %>%
-    data.frame
+# Define UI for application
+ui <- shinyUI(fluidPage(
+  titlePanel("Little Assistant"),
+  hr(),
+  fluidRow(
+    column(6, h4("How long's it been since you've been away?"),
+      selectInput("select", label = h5("Please select an option from the list below."),
+                  choices = list("1 day" = 1, "1 week" = 7, "1 month" = 30),
+                  selected = 1)),
+    column(6, h4("What type of articles do you want to focus on?"),
+      selectInput("filter", label = h5("Please select an option from the list below."),
+                  choices = list("All Sections" = 1, "World" = 2, "Politics" = 3),
+                  selected = 1))
+  ),
+  hr(),
+  fluidRow(
+    column(12, h4("timeline will go here"))
+  ),
+  hr(),
+  mainPanel(
+    h3("table will go here"),
+    dataTableOutput('mytable')
+  )
+  
+))
 
-articles$published_date <- as.Date(articles$published_date)
-today <- as.Date(Sys.Date())
-date.diff <- today - articles$published_date
-articles <- filter(articles, date.diff <= 30)
+# Define server logic
+server <- shinyServer(function(input, output) {
+  output$text1 <- renderText({ 
+    paste("You have selected", input$select)
+  })
+  
+  output$mytable = renderDataTable({
+    get_most_viewed("all-sections",1,1) %>% select(1,2,3)
+  })
+  
+  
+  
+})
 
-x <- list(
-  title = "Published (Date)"
-)
-y <- list(
-  title = "Views (Count)"
-)
-s <- rep(1,100)
-plot_ly(articles, x = published_date, y = views, text = title, 
-        mode="markers", color = section, size=s) %>% 
-          layout(xaxis = x, yaxis = y)
+# Run the application 
+shinyApp(ui, server)
+
