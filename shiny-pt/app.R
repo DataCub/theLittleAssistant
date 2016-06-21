@@ -6,7 +6,7 @@
 # http://shiny.rstudio.com/
 
 library(shiny)
-
+library(plotly)
 library(httr)
 library(knitr)
 library(dplyr)
