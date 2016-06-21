@@ -19,7 +19,7 @@ library(data.table)
 
 times.key <- "fb6186a7c44a4a8086ec99fa0b09566b"
 
-get_most_viewed <- function(section = "all-sections", time_period = 1, iterations = 1, debug = FALSE) {
+get_most_viewed <- (function(section = "all-sections", time_period = 1, iterations = 1, debug = FALSE) {
   
   for (i in 1:iterations) {
     
@@ -82,46 +82,73 @@ get_most_viewed <- function(section = "all-sections", time_period = 1, iteration
     }
   }
   return (results_json)
-}
+})
 
 # Define UI for application
 ui <- shinyUI(fluidPage(
   titlePanel("Little Assistant"),
   hr(),
   fluidRow(
-    column(6, h4("How long's it been since you've been away?"),
+    column(12, h4("How long's it been since you've been away?"),
       selectInput("select", label = h5("Please select an option from the list below."),
                   choices = list("1 day" = 1, "1 week" = 7, "1 month" = 30),
-                  selected = 1)),
-    column(6, h4("What type of articles do you want to focus on?"),
-      selectInput("filter", label = h5("Please select an option from the list below."),
-                  choices = list("All Sections" = 1, "World" = 2, "Politics" = 3),
                   selected = 1))
   ),
   hr(),
-  fluidRow(
-    column(12, h4("timeline will go here"))
-  ),
-  hr(),
   mainPanel(
-    h3("table will go here"),
-    dataTableOutput('mytable')
+    textOutput("text1"),
+    plotlyOutput('plot', width="900px", height = "500px")
   )
   
 ))
 
 # Define server logic
 server <- shinyServer(function(input, output) {
+  
   output$text1 <- renderText({ 
-    paste("You have selected", input$select)
+    input$select
   })
   
-  output$mytable = renderDataTable({
-    get_most_viewed("all-sections",1,1) %>% select(1,2,3)
-  })
+  tmp=sample(1,c(1,7,30))
+  tmp=3
   
-  
-  
+  if(tmp == 1) {
+    articles <- get_most_viewed("all-sections",1,5) %>% 
+      select(section, title, by, url, keywords, abstract, published_date, views) %>%
+        data.frame
+    articles$published_date <- as.Date(articles$published_date)
+    date.diff <- as.numeric(as.Date(Sys.Date()) - articles$published_date)
+    articles <- filter(articles, date.diff <= 3 & date.diff >= -1)
+  } else if(tmp == 7) {
+    articles <- get_most_viewed("all-sections",7,5) %>% 
+      select(section, title, by, url, keywords, abstract, published_date, views) %>%
+        data.frame
+    articles$published_date <- as.Date(articles$published_date)
+    date.diff <- as.numeric(as.Date(Sys.Date()) - articles$published_date)
+    articles <- filter(articles, date.diff <= 10 & date.diff >= -1)
+  } else {
+    articles <- get_most_viewed("all-sections",30,5) %>% 
+      select(section, title, by, url, keywords, abstract, published_date, views) %>%
+        data.frame
+    articles$published_date <- as.Date(articles$published_date)
+    date.diff <- as.numeric(as.Date(Sys.Date()) - articles$published_date)
+    articles <- filter(articles, date.diff <= 30 & date.diff >= -1)
+  }
+  x <- list(
+    title = "Published (Date)"  
+  )
+  y <- list(
+    title = "",
+    showticklabels = FALSE
+  )
+  s <- rep(1,100)
+  #s <- seq(1,5,.1)
+  my.plot <- plot_ly(articles, x = published_date, y = jitter(s), 
+                     text = title, 
+                     mode="markers", color = section, size = s) %>% 
+                        layout(xaxis = x, yaxis = y)
+  output$plot = renderPlotly(my.plot)
+    
 })
 
 # Run the application 
