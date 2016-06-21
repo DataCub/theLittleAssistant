@@ -26,7 +26,7 @@ get_most_viewed <- (function(section = "all-sections", time_period = 1, iteratio
     offset <- i * 20
     
     # construct the url
-    url_base <- paste0("http://api.nytimes.com/svc/mostpopular/v2/mostviewed/all-sections/", time_period)
+    url_base <- paste0("http://api.nytimes.com/svc/mostpopular/v2/mostviewed/", section, "/", time_period)
     url_base <- paste0(url_base, ".json?offset=", offset)
     url      <- paste0(url_base,"&api-key=", times.key)
     

@@ -6,7 +6,6 @@ library(data.table)
 library(knitr)
 library(DT)
 
-
 nyt_most_popular_api <- "a1001f5ad4ae4e07946c944b19f2ea01"
 get_most_viewed <- function(section = "all-sections", time_period = 1, iterations = 1, debug = FALSE) {
   
@@ -15,14 +14,14 @@ get_most_viewed <- function(section = "all-sections", time_period = 1, iteration
     offset <- i * 20
     
     # construct the URI
-    uri_base <- paste0("http://api.nytimes.com/svc/mostpopular/v2/mostviewed/",section, "/", time_period)
-    uri_base <- paste0(uri_base, ".json?offset=", offset)
-    uri      <- paste0(uri_base,"&api-key=", nyt_most_popular_api)
+    url_base <- paste0("http://api.nytimes.com/svc/mostpopular/v2/mostviewed/", section, "/", time_period)
+    url_base <- paste0(url_base, ".json?offset=", offset)
+    url      <- paste0(url_base,"&api-key=", nyt_most_popular_api)
     
-    if (debug) {print(uri)}
+    if (debug) {print(url)}
     
     # Get the first batch of 20 using the the API
-    raw_contents <- GET(url = uri)
+    raw_contents <- GET(url)
     
     # store the json
     json_raw <- httr::content(raw_contents, type = "text", encoding = "UTF-8")
@@ -32,7 +31,7 @@ get_most_viewed <- function(section = "all-sections", time_period = 1, iteration
     json_raw %>% enter_object("status") %>%
       append_values_string("status") %>% select(status)
     
-    ## get the number of resultes
+    ## get the number of results
     results <- 
       json_raw %>% 
       enter_object("num_results") %>%
@@ -75,7 +74,7 @@ get_most_viewed <- function(section = "all-sections", time_period = 1, iteration
   results$title <- paste0('<a href="',results$url,'">', results$title,"</a>")
   results <- results[,-c(4, 7)]
   
-  return (as.data.frame(results))
+  return (results)
 }
 
 
