@@ -1,8 +1,10 @@
 library(httr)
 library(knitr)
 library(dplyr)
+library(plotly)
 library(ggplot2)
 library(tidyjson)
+library(timeline)
 library(data.table)
 
 # rm(list = ls())
@@ -74,3 +76,20 @@ get_most_viewed <- function(section = "all-sections", time_period = 1, iteration
   return (results_json)
 }
 
+g <- get_most_viewed("all-sections",7,2) %>% 
+  select(section, title, by, url, keywords, abstract, published_date, views) %>%
+    data.frame
+
+g$published_date <- as.Date(g$published_date)
+date.diff <- c(as.numeric(diff(g$published_date)),0)
+g <- filter(g, date.diff >= -30)
+
+x <- list(
+  title = "Published (Date)"
+)
+y <- list(
+  title = "Views (Count)"
+)
+
+plot_ly(g, x = published_date, y = views, text = title,
+        mode = "markers", color = section) %>% layout(xaxis = x, yaxis = y)

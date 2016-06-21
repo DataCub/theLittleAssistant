@@ -11,6 +11,7 @@ library(httr)
 library(knitr)
 library(dplyr)
 library(ggplot2)
+library(timeline)
 library(tidyjson)
 library(data.table)
 
@@ -104,7 +105,7 @@ ui <- shinyUI(fluidPage(
   hr(),
   mainPanel(
     h3("table will go here"),
-    tableOutput('table')
+    dataTableOutput('mytable')
   )
   
 ))
@@ -114,6 +115,13 @@ server <- shinyServer(function(input, output) {
   output$text1 <- renderText({ 
     paste("You have selected", input$select)
   })
+  
+  output$mytable = renderDataTable({
+    get_most_viewed("all-sections",1,1) %>% select(1,2,3)
+  })
+  
+  
+  
 })
 
 # Run the application 
