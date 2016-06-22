@@ -3,13 +3,12 @@ library(curl)
 library(jsonlite)
 library(httr)
 
-test <- GET("https://www.googleapis.com/youtube/v3/videos")
-http_status(test)
+
 # Your API key obtained via https://console.developers.google.com/ 
 API_key='AIzaSyARX7-F4xQnLrSgUQi6MjAcpPcLtZwhkZY'
 
 # Base URL for Google API's services and YouTube specific API's
-Base_URL='https://www.googleapis.com/youtube/v3/video'
+Base_URL='https://www.googleapis.com/youtube/v3'
 
 # YouTube Web Services
 # Note that we have replaced the %2C with "," so sprintf works correctly with it
