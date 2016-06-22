@@ -83,25 +83,27 @@ get_most_viewed <- function(section = "all-sections", time_period = 1, iteration
     }
   }
   results <- as.data.frame(results_json)
-  results$title_link <- paste0('<a href="',results$url,'">', results$title,"</a>")
+  results$title_link <- paste0('<a target="_blank" href="',results$url,'">', results$title,"</a>")
   
   return (results)
 }
 
 # Define UI for application
-ui <- shinyUI(fluidPage(
-  theme = shinytheme("Journal"),
-  titlePanel("Your Little Assistant"),
-  tags$head(tags$link(rel="shortcut icon", href="http://coghillcartooning.com/images/art/cartooning/character-design/news-hound-cartoon-character.jpg")),
-  selectInput(inputId = "time", label = "How long have you been away from the world?",
+ui <- shinyUI(
+  fluidPage(
+    theme = shinytheme("Journal"),
+    titlePanel("Your Little Assistant"),
+    tags$head(tags$link(rel="shortcut icon", href="http://coghillcartooning.com/images/art/cartooning/character-design/news-hound-cartoon-character.jpg")),
+
+    selectInput(inputId = "time", label = "How long have you been away from the world?",
               c("one day" = 1, "one week" = 7, "one month" = 30)),
-  selectInput(inputId = "section", label = "What would you like to catch up on?",
-              c("all-sections" = "all-sections", "World" = "World", 
-                "U.S." = "U.S.", "Travel" = "Travel", "The Upshot" = "The Upshot",
-                "Technology" = "Technology", "Style" = "Style", "Sports" = "Sports", 
-                "Science" = "Science", "Opinion" = "Opinion", "N.Y. / Region" = "N.Y. / Region",
-                "Movies" = "Movies", "Magazine" = "Magazine", "Health" = "Health", 
-                "Business Day" = "Business Day", "Books" = "Books", "Art" = "Art")),
+    selectInput(inputId = "section", label = "What would you like to catch up on?",
+            c("all-sections" = "all-sections", "World" = "World", 
+              "U.S." = "U.S.", "Travel" = "Travel", "The Upshot" = "The Upshot",
+              "Technology" = "Technology", "Style" = "Style", "Sports" = "Sports", 
+              "Science" = "Science", "Opinion" = "Opinion", "N.Y. / Region" = "N.Y. / Region",
+              "Movies" = "Movies", "Magazine" = "Magazine", "Health" = "Health", 
+              "Business Day" = "Business Day", "Books" = "Books", "Art" = "Art")),
   fluidPage(DT::dataTableOutput('tbl')),
   hr(),
   mainPanel(
@@ -113,9 +115,12 @@ ui <- shinyUI(fluidPage(
 # Define server logic
 server <- shinyServer(function(input, output) {
   
+  output$text1 = renderText("this is text1")
+  output$text2 = renderText("this is text2")
+  
   output$tbl = DT::renderDataTable(get_most_viewed(
     section = input$section, time_period = input$time)
-    %>% select(type, section, title_link, abstract, published_date), escape = FALSE, options = list(lengthChange = FALSE))
+    %>% select(section, title_link, abstract, published_date), escape = FALSE, options = list(lengthChange = FALSE))
   
   tmp=1
   if(tmp == 1) {
