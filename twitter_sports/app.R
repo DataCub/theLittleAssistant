@@ -12,11 +12,12 @@ library(ggplot2)
 library(tidyjson)
 library(data.table)
 library(shinythemes)
+library(DT)
 
 source("carouselPanel.R")
 
 nice.date <- function(date) {
-  mth <- month(date, label=TRUE)
+  mth <- month(date)
   day <- day(date)
   year <- year(date)
   paste(mth, day)
@@ -114,13 +115,14 @@ runApp(list(ui = fluidPage(
         href = "https://twitter.com/Complex_Sports")
       ), 
     mainPanel(
-      dataTableOutput('tbl'),
+      DT::dataTableOutput('tbl'),
       hr(),
       carouselPanel(auto.advance=TRUE,
                     dataTableOutput("top"),
                     dataTableOutput("upcoming")
       )
-    ) 
+    )
+    
   )
 ), 
 server = function(input, output, session){
