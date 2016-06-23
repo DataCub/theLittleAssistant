@@ -95,34 +95,37 @@ get_most_viewed <- function(section = "all-sections", time_period = 1, iteration
 
 
 runApp(list(ui = fluidPage(
+  theme = "bootstrap.css",
   tags$head(tags$script('!function(d,s,id){var js,fjs=d.getElementsByTagName(s)    [0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");')),
   tags$head(tags$link(rel="shortcut icon", href="http://coghillcartooning.com/images/art/cartooning/character-design/news-hound-cartoon-character.jpg")),
   
   titlePanel("Little Assistant"),
-
-  selectInput(inputId = "time", label = "How long have you been away from the world?",
-              c("one day" = 1, "one week" = 7, "one month" = 30)),
-  selectInput(inputId = "section", label = "What would you like to catch up on?",
-              c("all-sections" = "all-sections", "World" = "World", 
-                "U.S." = "U.S.", "Travel" = "Travel", "The Upshot" = "The Upshot",
-                "Technology" = "Technology", "Style" = "Style", "Sports" = "Sports", 
-                "Science" = "Science", "Opinion" = "Opinion", "N.Y. / Region" = "N.Y. / Region",
-                "Movies" = "Movies", "Magazine" = "Magazine", "Health" = "Health", 
-                "Business Day" = "Business Day", "Books" = "Books", "Art" = "Art")),
+  fluidRow(
+    column(3, selectInput(inputId = "time", label = "How long have you been away from the world?",
+                          c("one day" = 1, "one week" = 7, "one month" = 30))),
+    column(3, offset = 2, selectInput(inputId = "section", label = "What would you like to catch up on?\n",
+                                      c("all-sections" = "all-sections", "World" = "World", 
+                                        "U.S." = "U.S.", "Travel" = "Travel", "The Upshot" = "The Upshot",
+                                        "Technology" = "Technology", "Style" = "Style", "Sports" = "Sports", 
+                                        "Science" = "Science", "Opinion" = "Opinion", "N.Y. / Region" = "N.Y. / Region",
+                                        "Movies" = "Movies", "Magazine" = "Magazine", "Health" = "Health", 
+                                        "Business Day" = "Business Day", "Books" = "Books", "Art" = "Art")))
+  ),
   sidebarLayout(
-    sidebarPanel(
-      a("@Complex_Sports", class="twitter-timeline",
-        href = "https://twitter.com/Complex_Sports")
-      ), 
+    sidebarPanel(h1("Sports Section"),
+                 a("@Complex_Sports", class="twitter-timeline",
+                   href = "https://twitter.com/Complex_Sports")
+    ), 
     mainPanel(
       DT::dataTableOutput('tbl'),
       hr(),
+      h1("Hot and Upcoming Movies"),
       carouselPanel(auto.advance=TRUE,
                     dataTableOutput("top"),
                     dataTableOutput("upcoming")
       )
-    )
-    
+    ),
+    position = "right"
   )
 ), 
 server = function(input, output, session){
@@ -138,13 +141,13 @@ server = function(input, output, session){
     transmute(`Hot Movies`=title, 
               Released=nice.date(release_date),
               Popularity=1:length(popularity)
-              )
+    )
   upcoming.movies <- upcoming.content$results %>% na.omit %>%
     select(title,release_date,backdrop_path,popularity) %>%
     transmute(`Upcoming Movies`=title, 
               Coming=nice.date(release_date),
               Popularity=1:length(popularity)
-              )
+    )
   
   output$top <- renderDataTable(top.movies[1:8,], options = list(
     searching=FALSE,
@@ -160,6 +163,6 @@ server = function(input, output, session){
     section = input$section, time_period = input$time) %>% 
       select(section, title_link, abstract, published_date), escape = FALSE, options = list(lengthChange = FALSE))
   
-    }
-  )
+}
+)
 )
