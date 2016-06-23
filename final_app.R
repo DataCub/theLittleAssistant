@@ -119,37 +119,6 @@ server <- shinyServer(function(input, output) {
     section = input$section, time_period = input$time)
     %>% select(section, title_link, abstract, published_date), escape = FALSE, options = list(lengthChange = FALSE))
   
-  tmp=1
-  if(tmp == 1) {
-    articles <- get_most_viewed("all-sections",1,5) 
-    articles$published_date <- as.Date(articles$published_date)
-    date.diff <- as.numeric(as.Date(Sys.Date()) - articles$published_date)
-    articles <- filter(articles, date.diff <= 3 & date.diff >= -1)
-  } else if(tmp == 7) {
-    articles <- get_most_viewed("all-sections",7,5) 
-    articles$published_date <- as.Date(articles$published_date)
-    date.diff <- as.numeric(as.Date(Sys.Date()) - articles$published_date)
-    articles <- filter(articles, date.diff <= 10 & date.diff >= -1)
-  } else {
-    articles <- get_most_viewed("all-sections",30,5)
-    articles$published_date <- as.Date(articles$published_date)
-    date.diff <- as.numeric(as.Date(Sys.Date()) - articles$published_date)
-    articles <- filter(articles, date.diff <= 30 & date.diff >= -1)
-  }
-  x <- list(
-    title = "Published (Date)"  
-  )
-  y <- list(
-    title = "",
-    showticklabels = FALSE
-  )
-  s <- rep(1,100)
-  #s <- seq(1,5,.1)
-  my.plot <- plot_ly(articles, x = published_date, y = jitter(s), 
-                     text = title, 
-                     mode="markers", color = section, size = s) %>% 
-    layout(xaxis = x, yaxis = y)
-  output$plot = renderPlotly(my.plot)
 })
 
 # Run the application 

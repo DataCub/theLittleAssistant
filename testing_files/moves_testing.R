@@ -52,6 +52,7 @@ server <- shinyServer(function(input, output) {
     searching=FALSE,
     info=FALSE,
     paging=FALSE))
+  
   output$upcoming <- renderDataTable(upcoming.movies[1:8,], options = list(
     searching=FALSE,
     info=FALSE,
