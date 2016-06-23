@@ -1,4 +1,3 @@
-# top movies testing 
 library(httr)
 library(shiny)
 library(dplyr)
@@ -13,7 +12,7 @@ source("carouselPanel.R")
 ui <- shinyUI(fluidPage(
   
   theme = "Flatly",
-  
+   
   # Application title
   titlePanel("Movies"),
   
@@ -24,7 +23,7 @@ ui <- shinyUI(fluidPage(
                   dataTableOutput("upcoming")
     )
   )
-  
+   
 ))
 
 # Define server logic required to draw a histogram
@@ -38,24 +37,24 @@ server <- shinyServer(function(input, output) {
   
   top.movies <- top.content$results %>% na.omit %>% filter(original_language=='en') %>%
     select(title,release_date,backdrop_path,popularity) %>%
-    transmute(`Hot Movies`=title, 
-              Released=release_date, 
-              Popularity=1:length(popularity))
+      transmute(`Hot Movies`=title, 
+                Released=release_date, 
+                Popularity=1:length(popularity))
   
   upcoming.movies <- upcoming.content$results %>% na.omit %>%
     select(title,release_date,backdrop_path,popularity) %>%
-    transmute(`Upcoming Movies`=title, 
-              Coming=release_date, 
-              Popularity=1:length(popularity))
+      transmute(`Upcoming Movies`=title, 
+                Coming=release_date, 
+                Popularity=1:length(popularity))
   
   output$top <- renderDataTable(top.movies[1:8,], options = list(
-    searching=FALSE,
-    info=FALSE,
-    paging=FALSE))
+                                    searching=FALSE,
+                                    info=FALSE,
+                                    paging=FALSE))
   output$upcoming <- renderDataTable(upcoming.movies[1:8,], options = list(
-    searching=FALSE,
-    info=FALSE,
-    paging=FALSE))
+                                    searching=FALSE,
+                                    info=FALSE,
+                                    paging=FALSE))
   
 })
 

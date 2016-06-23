@@ -115,9 +115,6 @@ ui <- shinyUI(
 # Define server logic
 server <- shinyServer(function(input, output) {
   
-  output$text1 = renderText("this is text1")
-  output$text2 = renderText("this is text2")
-  
   output$tbl = DT::renderDataTable(get_most_viewed(
     section = input$section, time_period = input$time)
     %>% select(section, title_link, abstract, published_date), escape = FALSE, options = list(lengthChange = FALSE))
