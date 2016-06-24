@@ -162,7 +162,7 @@ runApp(list(ui = fluidPage(
     mainPanel(h2("News"),
       DT::dataTableOutput('tbl'),
       hr(),
-      h2("Hot Movies & Even Hotter Songs"),
+      h2("Hot Movies & Songs"),
       carouselPanel(auto.advance=TRUE,
                     dataTableOutput("top"),
                     #dataTableOutput("upcoming"),
@@ -195,7 +195,7 @@ server = function(input, output, session){
               Popularity=1:length(popularity))
   
   #MUSIC
-  songs <- getTopX(50)
+  songs <- getTopX(10)
   output$music <- renderDataTable(songs[1:10,], options = list(
     searching=FALSE,
     info=FALSE,
