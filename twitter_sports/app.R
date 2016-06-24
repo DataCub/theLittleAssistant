@@ -162,16 +162,16 @@ runApp(list(ui = fluidPage(
     mainPanel(h2("News"),
       DT::dataTableOutput('tbl'),
       hr(),
-      h2("Hot & Upcoming Movies"),
+      h2("Hot Movies & Even Hotter Songs"),
       carouselPanel(auto.advance=TRUE,
                     dataTableOutput("top"),
-                    dataTableOutput("upcoming")
+                    #dataTableOutput("upcoming"),
+                    dataTableOutput("music")
       )
       
     ),
     position = "right"
   )
-
 ), 
 server = function(input, output, session){
   
@@ -196,7 +196,7 @@ server = function(input, output, session){
   
   #MUSIC
   songs <- getTopX(50)
-  output$music <- renderDataTable(songs[1:20,], options = list(
+  output$music <- renderDataTable(songs[1:10,], options = list(
     searching=FALSE,
     info=FALSE,
     paging=FALSE))
@@ -214,12 +214,12 @@ server = function(input, output, session){
   iframes <- paste0("<iframe width=\"395\" height=\"200\" src=", urls ," frameborder=\"0\" allowfullscreen></iframe>")
   iframes
   
-  output$top <- renderDataTable(top.movies[1:8,], options = list(
+  output$top <- renderDataTable(top.movies[1:10,], options = list(
     searching=FALSE,
     info=FALSE,
     paging=FALSE))
   
-  output$upcoming <- renderDataTable(upcoming.movies[1:8,], options = list(
+  output$upcoming <- renderDataTable(upcoming.movies[1:10,], options = list(
     searching=FALSE,
     info=FALSE,
     paging=FALSE))
