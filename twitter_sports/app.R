@@ -14,6 +14,8 @@ library(data.table)
 library(shinythemes)
 library(DT)
 library(stringr)
+library(rvest)
+
 
 source("carouselPanel.R")
 
@@ -21,6 +23,28 @@ nice.date <- function(date) {
   m <- lubridate::month(date, label=TRUE)
   d <- lubridate::wday(date)
   paste(m,d)
+}
+
+getTopX <- function(x) {
+  nodes <- read_html("http://www.billboard.com/charts/hot-100") %>%
+    html_nodes(css = "#main > div:nth-child(4) > div > div:nth-child(1)")
+  song.names <- c()
+  artist.names <- c()
+  vec <- as.character(seq(1,x,1))
+  for(v in vec) {
+    entry.css = paste("article.chart-row.chart-row--",v,".js-chart-row > div.chart-row__primary > div.chart-row__main-display > div.chart-row__container > div",sep="")
+    entry.node = html_nodes(nodes, css=entry.css)
+    song.name = html_nodes(entry.node, css="h2") %>% html_text
+    song.artist = html_nodes(entry.node, css="a") %>% html_text %>% str_trim
+    song.names <- c(song.names, song.name)
+    artist.names <-c(artist.names, song.artist)
+    #print(log.entry)
+  }
+  #print(song.names)
+  #print(artist.names)
+  df <- data.frame(song.names, artist.names)
+  colnames(df) <- c("Song","Artist")
+  df
 }
 
 nyt_most_popular_api <- "a1001f5ad4ae4e07946c944b19f2ea01"
@@ -126,7 +150,7 @@ runApp(list(ui = fluidPage(
   sidebarLayout(
     sidebarPanel(
                  h2("YouTube"),
-                 HTML('<iframe width=\"395\" height=\"200\" src=\"//www.youtube.com/embed/dQw4w9WgXcQ\" frameborder=\"0\" allowfullscreen></iframe>'),
+                 HTML(iframes),
                  h2("Sports"),
                  a("@Complex_Sports", class="twitter-timeline",
                    href = "https://twitter.com/Complex_Sports",
@@ -167,6 +191,9 @@ server = function(input, output, session){
               Coming=nice.date(as.Date(release_date)),
               Popularity=1:length(popularity))
   
+  #MUSIC
+  songs <- getTopX(50)
+  
   #YOUTUBE
   tmp <- fromJSON(paste0("https://www.googleapis.com/youtube/v3/videos?", #everything after '?' is parameters being passed, '&' separates the argument
                          "part=snippet&chart=mostPopular&key=AIzaSyARX7-F4xQnLrSgUQi6MjAcpPcLtZwhkZY"))
@@ -175,11 +202,10 @@ server = function(input, output, session){
   ids <- tmp$items$id
   
   urls <- as.character(sapply(ids, function(x) {paste0("https://www.youtube.com/watch?v=", x)})) # all the urls 
-  
   urls
-  paste0("<iframe width=\"395\" height=\"200\" src=\", urls ,\" frameborder=\"0\" allowfullscreen></iframe>")
-  
-  
+
+  iframes <- paste0("<iframe width=\"395\" height=\"200\" src=", urls ," frameborder=\"0\" allowfullscreen></iframe>")
+  iframes
   
   output$top <- renderDataTable(top.movies[1:8,], options = list(
     searching=FALSE,
