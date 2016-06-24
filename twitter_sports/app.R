@@ -47,6 +47,8 @@ getTopX <- function(x) {
   df
 }
 
+g <- getTopX(25)
+
 nyt_most_popular_api <- "a1001f5ad4ae4e07946c944b19f2ea01"
 get_most_viewed <- function(section = "all-sections", time_period = 1, iterations = 1, debug = FALSE) {
   
@@ -117,18 +119,18 @@ get_most_viewed <- function(section = "all-sections", time_period = 1, iteration
   return (results)
 }
 
-titles <- tmp$items$snippet$title # all the video titles 
-ids <- tmp$items$id
-ids
-ids <- paste0(ids, '"')
-ids
+#titles <- tmp$items$snippet$title # all the video titles 
+#ids <- tmp$items$id
+#ids
+#ids <- paste0(ids, '"')
+#ids
 
-urls <- as.character(sapply(ids, function(x) {paste0('"https://www.youtube.com/watch?v=', x)})) # all the urls 
-urls
-iframes <- paste('<iframe width=\"400\" height=\"200\" src=', urls,' frameborder=\"0\" allowfullscreen></iframe>', sep="")
-iframes
+#urls <- as.character(sapply(ids, function(x) {paste0('"https://www.youtube.com/watch?v=', x)})) # all the urls 
+#urls
+#iframes <- paste('<iframe width=\"400\" height=\"200\" src=', urls,' frameborder=\"0\" allowfullscreen></iframe>', sep="")
+#iframes
 
-'<iframe width=\"395\" height=\"200\" src=\"//www.youtube.com/embed/dQw4w9WgXcQ\" frameborder=\"0\" allowfullscreen></iframe>'
+#'<iframe width=\"395\" height=\"200\" src=\"//www.youtube.com/embed/dQw4w9WgXcQ\" frameborder=\"0\" allowfullscreen></iframe>'
 
 runApp(list(ui = fluidPage(
   theme = "bootstrap.css",
@@ -150,7 +152,7 @@ runApp(list(ui = fluidPage(
   sidebarLayout(
     sidebarPanel(
                  h2("YouTube"),
-                 HTML(iframes),
+                 HTML('<iframe width=\"395\" height=\"200\" src=\"//www.youtube.com/embed/Ockhq8E2FrA\" frameborder=\"0\" allowfullscreen></iframe>'),
                  h2("Sports"),
                  a("@Complex_Sports", class="twitter-timeline",
                    href = "https://twitter.com/Complex_Sports",
@@ -165,6 +167,7 @@ runApp(list(ui = fluidPage(
                     dataTableOutput("top"),
                     dataTableOutput("upcoming")
       )
+      
     ),
     position = "right"
   )
@@ -193,6 +196,10 @@ server = function(input, output, session){
   
   #MUSIC
   songs <- getTopX(50)
+  output$music <- renderDataTable(songs[1:20,], options = list(
+    searching=FALSE,
+    info=FALSE,
+    paging=FALSE))
   
   #YOUTUBE
   tmp <- fromJSON(paste0("https://www.googleapis.com/youtube/v3/videos?", #everything after '?' is parameters being passed, '&' separates the argument
