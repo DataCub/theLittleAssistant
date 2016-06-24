@@ -119,18 +119,15 @@ get_most_viewed <- function(section = "all-sections", time_period = 1, iteration
   return (results)
 }
 
-<<<<<<< HEAD
 ids <- tmp$items$id
 ids <- paste0(ids, '"')
 
 urls <- as.character(sapply(ids, function(x) {paste0('"https://www.youtube.com/embed/', x)})) # all the urls 
 urls <- str_replace_all(urls, "https:", "")
 
-
-
 iframes <- paste('<iframe width=\"400\" height=\"200\" src=', urls,' frameborder=\"0\" allowfullscreen></iframe>', sep="")
 iframes
-=======
+
 #titles <- tmp$items$snippet$title # all the video titles 
 #ids <- tmp$items$id
 #ids
@@ -141,7 +138,6 @@ iframes
 #urls
 #iframes <- paste('<iframe width=\"400\" height=\"200\" src=', urls,' frameborder=\"0\" allowfullscreen></iframe>', sep="")
 #iframes
->>>>>>> 36113e903cc15b0ce52d6fb4920df621997244e6
 
 #'<iframe width=\"395\" height=\"200\" src=\"//www.youtube.com/embed/dQw4w9WgXcQ\" frameborder=\"0\" allowfullscreen></iframe>'
 
@@ -150,7 +146,9 @@ runApp(list(ui = fluidPage(
   tags$head(tags$script('!function(d,s,id){var js,fjs=d.getElementsByTagName(s)    [0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");')),
   tags$head(tags$link(rel="shortcut icon", href="http://coghillcartooning.com/images/art/cartooning/character-design/news-hound-cartoon-character.jpg")),
   
-  titlePanel(h1("Little Assistant")),
+  titlePanel("Little Assistant"),
+  h3("Get back in the loop, dog!"),
+  hr(),
   fluidRow(
     column(3, selectInput(inputId = "time", label = "How long have you been away from the world?",
                           c("one day" = 1, "one week" = 7, "one month" = 30))),
@@ -162,6 +160,7 @@ runApp(list(ui = fluidPage(
                                         "Movies" = "Movies", "Magazine" = "Magazine", "Health" = "Health", 
                                         "Business Day" = "Business Day", "Books" = "Books", "Art" = "Art")))
   ),
+  hr(),
   sidebarLayout(
     sidebarPanel(
                  h2("YouTube"),
@@ -239,8 +238,9 @@ server = function(input, output, session){
   
   output$tbl = DT::renderDataTable(get_most_viewed(
     section = input$section, time_period = input$time) %>% 
-      select(section, title_link, abstract, published_date), escape = FALSE, options = list(lengthChange = FALSE,
-                                                                                            pageLength = 5))
+      select(section, title_link, abstract, published_date) %>% 
+      setnames(c("Section", "Article Link", "Blurb", "Date Published")), 
+    escape = FALSE, options = list(lengthChange = FALSE, pageLength = 5))
   
     }
   )
