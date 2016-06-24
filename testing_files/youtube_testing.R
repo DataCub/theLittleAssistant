@@ -10,5 +10,3 @@ titles <- tmp$items$snippet$title # all the video titles
 ids <- tmp$items$id
 
 urls <- as.character(sapply(ids, function(x) {paste0("https://www.youtube.com/watch?v=", x)})) # all the urls 
-
-

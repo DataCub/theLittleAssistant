@@ -126,7 +126,7 @@ runApp(list(ui = fluidPage(
   sidebarLayout(
     sidebarPanel(
                  h2("YouTube"),
-                 HTML(iframese),
+                 HTML('<iframe width=\"395\" height=\"200\" src=\"//www.youtube.com/embed/dQw4w9WgXcQ\" frameborder=\"0\" allowfullscreen></iframe>'),
                  h2("Sports"),
                  a("@Complex_Sports", class="twitter-timeline",
                    href = "https://twitter.com/Complex_Sports",
@@ -148,6 +148,7 @@ runApp(list(ui = fluidPage(
 ), 
 server = function(input, output, session){
   
+  #MOVIES
   top <- GET("http://api.themoviedb.org/3/movie/now_playing?api_key=bc430e79d5377e1028b278f358f45b68")
   upcoming <- GET("http://api.themoviedb.org/3/movie/upcoming?api_key=bc430e79d5377e1028b278f358f45b68")
   
@@ -166,9 +167,16 @@ server = function(input, output, session){
               Coming=nice.date(as.Date(release_date)),
               Popularity=1:length(popularity))
   
-  
+  #YOUTUBE
   tmp <- fromJSON(paste0("https://www.googleapis.com/youtube/v3/videos?", #everything after '?' is parameters being passed, '&' separates the argument
                          "part=snippet&chart=mostPopular&key=AIzaSyARX7-F4xQnLrSgUQi6MjAcpPcLtZwhkZY"))
+  
+  titles <- tmp$items$snippet$title # all the video titles 
+  ids <- tmp$items$id
+  
+  urls <- as.character(sapply(ids, function(x) {paste0("https://www.youtube.com/watch?v=", x)})) # all the urls 
+  
+  
   
   output$top <- renderDataTable(top.movies[1:8,], options = list(
     searching=FALSE,
