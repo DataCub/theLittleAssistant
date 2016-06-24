@@ -25,6 +25,19 @@ nice.date <- function(date) {
   paste(m,d)
 }
 
+# YOUTUBE FUNCTION 
+tmp <- fromJSON(paste0("https://www.googleapis.com/youtube/v3/videos?", #everything after '?' is parameters being passed, '&' separates the argument
+                       "part=snippet&chart=mostPopular&key=AIzaSyARX7-F4xQnLrSgUQi6MjAcpPcLtZwhkZY"))
+
+titles <- tmp$items$snippet$title # all the video titles 
+ids <- tmp$items$id
+
+urls <- as.character(sapply(ids, function(x) {paste0("https://www.youtube.com/watch?v=", x)})) # all the urls 
+
+iframes <- paste0("<iframe width=\"395\" height=\"200\" src=", urls ," frameborder=\"0\" allowfullscreen></iframe>")
+
+# SONGS FUNCTION 
+
 getTopX <- function(x) {
   nodes <- read_html("http://www.billboard.com/charts/hot-100") %>%
     html_nodes(css = "#main > div:nth-child(4) > div > div:nth-child(1)")
@@ -122,6 +135,7 @@ ids <- paste0(ids, '"')
 
 urls <- as.character(sapply(ids, function(x) {paste0('"https://www.youtube.com/embed/', x)})) # all the urls 
 urls <- str_replace_all(urls, "https:", "")
+urls <- urls[1:3]
 
 
 
@@ -193,19 +207,6 @@ server = function(input, output, session){
   
   #MUSIC
   songs <- getTopX(50)
-  
-  #YOUTUBE
-  tmp <- fromJSON(paste0("https://www.googleapis.com/youtube/v3/videos?", #everything after '?' is parameters being passed, '&' separates the argument
-                         "part=snippet&chart=mostPopular&key=AIzaSyARX7-F4xQnLrSgUQi6MjAcpPcLtZwhkZY"))
-  
-  titles <- tmp$items$snippet$title # all the video titles 
-  ids <- tmp$items$id
-  
-  urls <- as.character(sapply(ids, function(x) {paste0("https://www.youtube.com/watch?v=", x)})) # all the urls 
-  urls
-
-  iframes <- paste0("<iframe width=\"395\" height=\"200\" src=", urls ," frameborder=\"0\" allowfullscreen></iframe>")
-  iframes
   
   output$top <- renderDataTable(top.movies[1:8,], options = list(
     searching=FALSE,
