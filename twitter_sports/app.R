@@ -147,30 +147,32 @@ runApp(list(ui = fluidPage(
   tags$head(tags$script('!function(d,s,id){var js,fjs=d.getElementsByTagName(s)    [0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");')),
   tags$head(tags$link(rel="shortcut icon", href="http://coghillcartooning.com/images/art/cartooning/character-design/news-hound-cartoon-character.jpg")),
   
-  titlePanel("Little Assistant", align = "center"),
-  fluidRow(
-    column(3, selectInput(inputId = "time", label = "How long have you been off the grid?",
-                          c("one day" = 1, "one week" = 7, "one month" = 30))),
-    column(3, offset = 2, selectInput(inputId = "section", label = "What would you like to catch up on?\n",
-                                      c("all-sections" = "all-sections", "World" = "World", 
-                                        "U.S." = "U.S.", "Travel" = "Travel", "The Upshot" = "The Upshot",
-                                        "Technology" = "Technology", "Style" = "Style", "Sports" = "Sports", 
-                                        "Science" = "Science", "Opinion" = "Opinion", "N.Y. / Region" = "N.Y. / Region",
-                                        "Movies" = "Movies", "Magazine" = "Magazine", "Health" = "Health", 
-                                        "Business Day" = "Business Day", "Books" = "Books", "Art" = "Art")))
-  ),
+  titlePanel("Little Assistant"),
   sidebarLayout(
     sidebarPanel(
                  h2("YouTube"),
                  h5("Most Popular"),
                  HTML(iframes),
                  h2("Sports"),
+                 h5("Spotlight News"),
                  a("@Complex_Sports", class="twitter-timeline",
                    href = "https://twitter.com/Complex_Sports",
                    height = "750px"),
                  hr()
     ), 
     mainPanel(h2("News"),
+      column(3, selectInput(inputId = "time", label = "How long have you been off the grid?",
+                                    c("one day" = 1, "one week" = 7, "one month" = 30))),
+      fluidRow(
+        
+        column(3, offset = 2, selectInput(inputId = "section", label = "What would you like to catch up on?\n",
+                                          c("all-sections" = "all-sections", "World" = "World", 
+                                            "U.S." = "U.S.", "Travel" = "Travel", "The Upshot" = "The Upshot",
+                                            "Technology" = "Technology", "Style" = "Style", "Sports" = "Sports", 
+                                            "Science" = "Science", "Opinion" = "Opinion", "N.Y. / Region" = "N.Y. / Region",
+                                            "Movies" = "Movies", "Magazine" = "Magazine", "Health" = "Health", 
+                                            "Business Day" = "Business Day", "Books" = "Books", "Art" = "Art")))
+      ),
       DT::dataTableOutput('tbl'),
       hr(),
       h2("Hot & Upcoming Movies"),
