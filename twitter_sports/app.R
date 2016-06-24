@@ -142,11 +142,13 @@ urls <- urls[1:3]
 iframes <- paste('<iframe width=\"350\" height=\"200\" src=', urls,' frameborder=\"0\" allowfullscreen></iframe>', sep="")
 
 runApp(list(ui = fluidPage(
-  theme = "journal",
+  theme = shinytheme("cerulean"),
   tags$head(tags$script('!function(d,s,id){var js,fjs=d.getElementsByTagName(s)    [0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");')),
   tags$head(tags$link(rel="shortcut icon", href="http://coghillcartooning.com/images/art/cartooning/character-design/news-hound-cartoon-character.jpg")),
   
   titlePanel("Little Assistant"),
+  img(src='http://coghillcartooning.com/images/art/cartooning/character-design/news-hound-cartoon-character.jpg', align = "center", height = "150px", width = "10%"),
+  h5("Check out what you missed, dog!"),
 
   sidebarLayout(
     sidebarPanel(
@@ -160,11 +162,11 @@ runApp(list(ui = fluidPage(
                    height = "400px")
     ), 
     mainPanel(h2("News"),
-      column(3, selectInput(inputId = "time", label = "How long have you been off the grid?",
+      column(5, selectInput(inputId = "time", label = "How long have you been off the grid?",
                                     c("one day" = 1, "one week" = 7, "one month" = 30))),
       fluidRow(
         
-        column(3, offset = 2, selectInput(inputId = "section", label = "What would you like to catch up on?\n",
+        column(4, offset = 2, selectInput(inputId = "section", label = "What would you like to catch up on?\n",
                                           c("all-sections" = "all-sections", "World" = "World", 
                                             "U.S." = "U.S.", "Travel" = "Travel", "The Upshot" = "The Upshot",
                                             "Technology" = "Technology", "Style" = "Style", "Sports" = "Sports", 
@@ -229,7 +231,7 @@ server = function(input, output, session){
     section = input$section, time_period = input$time) %>% 
       select(section, title_link, abstract, published_date) %>% 
       setnames(c("Section", "Article Link", "Synopsis", "Date Published")),
-    escape = FALSE, options = list(lengthChange = FALSE, pageLength = 5))
+    escape = FALSE, options = list(lengthChange = FALSE, pageLength = 5, searching = FALSE))
   
     }
   )
