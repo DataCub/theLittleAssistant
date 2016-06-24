@@ -117,14 +117,14 @@ get_most_viewed <- function(section = "all-sections", time_period = 1, iteration
   return (results)
 }
 
-titles <- tmp$items$snippet$title # all the video titles 
 ids <- tmp$items$id
-ids
 ids <- paste0(ids, '"')
-ids
 
-urls <- as.character(sapply(ids, function(x) {paste0('"https://www.youtube.com/watch?v=', x)})) # all the urls 
-urls
+urls <- as.character(sapply(ids, function(x) {paste0('"https://www.youtube.com/embed/', x)})) # all the urls 
+urls <- str_replace_all(urls, "https:", "")
+
+
+
 iframes <- paste('<iframe width=\"400\" height=\"200\" src=', urls,' frameborder=\"0\" allowfullscreen></iframe>', sep="")
 iframes
 
