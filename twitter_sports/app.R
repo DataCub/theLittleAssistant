@@ -14,7 +14,6 @@ library(data.table)
 library(shinythemes)
 library(DT)
 library(stringr)
-library(shinydashboard)
 library(rvest)
 
 
@@ -148,6 +147,20 @@ runApp(list(ui = fluidPage(
   tags$head(tags$link(rel="shortcut icon", href="http://coghillcartooning.com/images/art/cartooning/character-design/news-hound-cartoon-character.jpg")),
   
   titlePanel("Little Assistant"),
+<<<<<<< HEAD
+=======
+  fluidRow(
+    column(3, selectInput(inputId = "time", label = "How long have you been off the grid?",
+                          c("one day" = 1, "one week" = 7, "one month" = 30))),
+    column(3, offset = 2, selectInput(inputId = "section", label = "What would you like to catch up on?\n",
+                                      c("all-sections" = "all-sections", "World" = "World", 
+                                        "U.S." = "U.S.", "Travel" = "Travel", "The Upshot" = "The Upshot",
+                                        "Technology" = "Technology", "Style" = "Style", "Sports" = "Sports", 
+                                        "Science" = "Science", "Opinion" = "Opinion", "N.Y. / Region" = "N.Y. / Region",
+                                        "Movies" = "Movies", "Magazine" = "Magazine", "Health" = "Health", 
+                                        "Business Day" = "Business Day", "Books" = "Books", "Art" = "Art")))
+  ),
+>>>>>>> b318f595592e31a4a1c367af978c7fa396b65d9c
   sidebarLayout(
     sidebarPanel(
                  h2("YouTube"),
@@ -175,10 +188,11 @@ runApp(list(ui = fluidPage(
       ),
       DT::dataTableOutput('tbl'),
       hr(),
-      h2("Hot & Upcoming Movies"),
+      h2("Hot Movies & Hotter Songs"),
       carouselPanel(auto.advance=TRUE,
                     dataTableOutput("top"),
-                    dataTableOutput("upcoming")
+                    #dataTableOutput("upcoming"),
+                    dataTableOutput("songs")
       )
     ),
     position = "right"
@@ -207,9 +221,14 @@ server = function(input, output, session){
               Popularity=1:length(popularity))
   
   #MUSIC
-  songs <- getTopX(50)
+  songs <- getTopX(10)
+  output$songs <- renderDataTable(songs, options = list(
+    searching=FALSE,
+    info=FALSE,
+    paging=FALSE))
   
-  output$top <- renderDataTable(top.movies[1:8,], options = list(
+  
+  output$top <- renderDataTable(top.movies[1:10,], options = list(
     searching=FALSE,
     info=FALSE,
     paging=FALSE))
