@@ -14,7 +14,6 @@ library(data.table)
 library(shinythemes)
 library(DT)
 library(stringr)
-library(shinydashboard)
 library(rvest)
 
 
@@ -147,7 +146,7 @@ runApp(list(ui = fluidPage(
   tags$head(tags$script('!function(d,s,id){var js,fjs=d.getElementsByTagName(s)    [0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");')),
   tags$head(tags$link(rel="shortcut icon", href="http://coghillcartooning.com/images/art/cartooning/character-design/news-hound-cartoon-character.jpg")),
   
-  titlePanel("Little Assistant", align = "center"),
+  titlePanel("Little Assistant"),
   fluidRow(
     column(3, selectInput(inputId = "time", label = "How long have you been off the grid?",
                           c("one day" = 1, "one week" = 7, "one month" = 30))),
@@ -173,10 +172,11 @@ runApp(list(ui = fluidPage(
     mainPanel(h2("News"),
       DT::dataTableOutput('tbl'),
       hr(),
-      h2("Hot & Upcoming Movies"),
+      h2("Hot Movies & Hotter Songs"),
       carouselPanel(auto.advance=TRUE,
                     dataTableOutput("top"),
-                    dataTableOutput("upcoming")
+                    #dataTableOutput("upcoming"),
+                    dataTableOutput("songs")
       )
     ),
     position = "right"
@@ -205,9 +205,14 @@ server = function(input, output, session){
               Popularity=1:length(popularity))
   
   #MUSIC
-  songs <- getTopX(50)
+  songs <- getTopX(10)
+  output$songs <- renderDataTable(songs, options = list(
+    searching=FALSE,
+    info=FALSE,
+    paging=FALSE))
   
-  output$top <- renderDataTable(top.movies[1:8,], options = list(
+  
+  output$top <- renderDataTable(top.movies[1:10,], options = list(
     searching=FALSE,
     info=FALSE,
     paging=FALSE))
