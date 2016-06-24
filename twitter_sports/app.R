@@ -47,6 +47,8 @@ getTopX <- function(x) {
   df
 }
 
+g <- getTopX(25)
+
 nyt_most_popular_api <- "a1001f5ad4ae4e07946c944b19f2ea01"
 get_most_viewed <- function(section = "all-sections", time_period = 1, iterations = 1, debug = FALSE) {
   
@@ -117,6 +119,7 @@ get_most_viewed <- function(section = "all-sections", time_period = 1, iteration
   return (results)
 }
 
+<<<<<<< HEAD
 ids <- tmp$items$id
 ids <- paste0(ids, '"')
 
@@ -127,8 +130,20 @@ urls <- str_replace_all(urls, "https:", "")
 
 iframes <- paste('<iframe width=\"400\" height=\"200\" src=', urls,' frameborder=\"0\" allowfullscreen></iframe>', sep="")
 iframes
+=======
+#titles <- tmp$items$snippet$title # all the video titles 
+#ids <- tmp$items$id
+#ids
+#ids <- paste0(ids, '"')
+#ids
 
-'<iframe width=\"395\" height=\"200\" src=\"//www.youtube.com/embed/dQw4w9WgXcQ\" frameborder=\"0\" allowfullscreen></iframe>'
+#urls <- as.character(sapply(ids, function(x) {paste0('"https://www.youtube.com/watch?v=', x)})) # all the urls 
+#urls
+#iframes <- paste('<iframe width=\"400\" height=\"200\" src=', urls,' frameborder=\"0\" allowfullscreen></iframe>', sep="")
+#iframes
+>>>>>>> 36113e903cc15b0ce52d6fb4920df621997244e6
+
+#'<iframe width=\"395\" height=\"200\" src=\"//www.youtube.com/embed/dQw4w9WgXcQ\" frameborder=\"0\" allowfullscreen></iframe>'
 
 runApp(list(ui = fluidPage(
   theme = "bootstrap.css",
@@ -150,7 +165,7 @@ runApp(list(ui = fluidPage(
   sidebarLayout(
     sidebarPanel(
                  h2("YouTube"),
-                 HTML(iframes),
+                 HTML('<iframe width=\"395\" height=\"200\" src=\"//www.youtube.com/embed/Ockhq8E2FrA\" frameborder=\"0\" allowfullscreen></iframe>'),
                  h2("Sports"),
                  a("@Complex_Sports", class="twitter-timeline",
                    href = "https://twitter.com/Complex_Sports",
@@ -160,15 +175,16 @@ runApp(list(ui = fluidPage(
     mainPanel(h2("News"),
       DT::dataTableOutput('tbl'),
       hr(),
-      h2("Hot & Upcoming Movies"),
+      h2("Hot Movies & Even Hotter Songs"),
       carouselPanel(auto.advance=TRUE,
                     dataTableOutput("top"),
-                    dataTableOutput("upcoming")
+                    #dataTableOutput("upcoming"),
+                    dataTableOutput("music")
       )
+      
     ),
     position = "right"
   )
-
 ), 
 server = function(input, output, session){
   
@@ -193,6 +209,10 @@ server = function(input, output, session){
   
   #MUSIC
   songs <- getTopX(50)
+  output$music <- renderDataTable(songs[1:10,], options = list(
+    searching=FALSE,
+    info=FALSE,
+    paging=FALSE))
   
   #YOUTUBE
   tmp <- fromJSON(paste0("https://www.googleapis.com/youtube/v3/videos?", #everything after '?' is parameters being passed, '&' separates the argument
@@ -207,12 +227,12 @@ server = function(input, output, session){
   iframes <- paste0("<iframe width=\"395\" height=\"200\" src=", urls ," frameborder=\"0\" allowfullscreen></iframe>")
   iframes
   
-  output$top <- renderDataTable(top.movies[1:8,], options = list(
+  output$top <- renderDataTable(top.movies[1:10,], options = list(
     searching=FALSE,
     info=FALSE,
     paging=FALSE))
   
-  output$upcoming <- renderDataTable(upcoming.movies[1:8,], options = list(
+  output$upcoming <- renderDataTable(upcoming.movies[1:10,], options = list(
     searching=FALSE,
     info=FALSE,
     paging=FALSE))
