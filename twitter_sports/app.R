@@ -119,6 +119,18 @@ get_most_viewed <- function(section = "all-sections", time_period = 1, iteration
   return (results)
 }
 
+<<<<<<< HEAD
+ids <- tmp$items$id
+ids <- paste0(ids, '"')
+
+urls <- as.character(sapply(ids, function(x) {paste0('"https://www.youtube.com/embed/', x)})) # all the urls 
+urls <- str_replace_all(urls, "https:", "")
+
+
+
+iframes <- paste('<iframe width=\"400\" height=\"200\" src=', urls,' frameborder=\"0\" allowfullscreen></iframe>', sep="")
+iframes
+=======
 #titles <- tmp$items$snippet$title # all the video titles 
 #ids <- tmp$items$id
 #ids
@@ -129,6 +141,7 @@ get_most_viewed <- function(section = "all-sections", time_period = 1, iteration
 #urls
 #iframes <- paste('<iframe width=\"400\" height=\"200\" src=', urls,' frameborder=\"0\" allowfullscreen></iframe>', sep="")
 #iframes
+>>>>>>> 36113e903cc15b0ce52d6fb4920df621997244e6
 
 #'<iframe width=\"395\" height=\"200\" src=\"//www.youtube.com/embed/dQw4w9WgXcQ\" frameborder=\"0\" allowfullscreen></iframe>'
 
