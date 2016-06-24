@@ -176,6 +176,9 @@ server = function(input, output, session){
   
   urls <- as.character(sapply(ids, function(x) {paste0("https://www.youtube.com/watch?v=", x)})) # all the urls 
   
+  urls
+  paste0("<iframe width=\"395\" height=\"200\" src=\", urls ,\" frameborder=\"0\" allowfullscreen></iframe>")
+  
   
   
   output$top <- renderDataTable(top.movies[1:8,], options = list(
@@ -190,7 +193,8 @@ server = function(input, output, session){
   
   output$tbl = DT::renderDataTable(get_most_viewed(
     section = input$section, time_period = input$time) %>% 
-      select(section, title_link, abstract, published_date), escape = FALSE, options = list(lengthChange = FALSE))
+      select(section, title_link, abstract, published_date), escape = FALSE, options = list(lengthChange = FALSE,
+                                                                                            pageLength = 5))
   
     }
   )
