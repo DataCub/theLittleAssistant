@@ -220,8 +220,9 @@ server = function(input, output, session){
   
   output$tbl = DT::renderDataTable(get_most_viewed(
     section = input$section, time_period = input$time) %>% 
-      select(section, title_link, abstract, published_date), escape = FALSE, options = list(lengthChange = FALSE,
-                                                                                            pageLength = 5))
+      select(section, title_link, abstract, published_date) %>% 
+      setnames(c("Section", "Article Link", "Synopsis", "Date Published")),
+    escape = FALSE, options = list(lengthChange = FALSE, pageLength = 5))
   
     }
   )
