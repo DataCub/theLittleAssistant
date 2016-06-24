@@ -13,6 +13,7 @@ library(dplyr)
 library(ggplot2)
 library(timeline)
 library(tidyjson)
+library(lubridate)
 library(data.table)
 library(shinythemes)
 

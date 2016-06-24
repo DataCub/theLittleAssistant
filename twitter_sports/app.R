@@ -13,14 +13,14 @@ library(tidyjson)
 library(data.table)
 library(shinythemes)
 library(DT)
+library(stringr)
 
 source("carouselPanel.R")
 
 nice.date <- function(date) {
-  mth <- month(date)
-  day <- day(date)
-  year <- year(date)
-  paste(mth, day)
+  m <- lubridate::month(date, label=TRUE)
+  d <- lubridate::wday(date)
+  paste(m,d)
 }
 
 nyt_most_popular_api <- "a1001f5ad4ae4e07946c944b19f2ea01"
@@ -93,13 +93,25 @@ get_most_viewed <- function(section = "all-sections", time_period = 1, iteration
   return (results)
 }
 
+titles <- tmp$items$snippet$title # all the video titles 
+ids <- tmp$items$id
+ids
+ids <- paste0(ids, '"')
+ids
+
+urls <- as.character(sapply(ids, function(x) {paste0('"https://www.youtube.com/watch?v=', x)})) # all the urls 
+urls
+iframes <- paste('<iframe width=\"400\" height=\"200\" src=', urls,' frameborder=\"0\" allowfullscreen></iframe>', sep="")
+iframes
+
+'<iframe width=\"395\" height=\"200\" src=\"//www.youtube.com/embed/dQw4w9WgXcQ\" frameborder=\"0\" allowfullscreen></iframe>'
 
 runApp(list(ui = fluidPage(
   theme = "bootstrap.css",
   tags$head(tags$script('!function(d,s,id){var js,fjs=d.getElementsByTagName(s)    [0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");')),
   tags$head(tags$link(rel="shortcut icon", href="http://coghillcartooning.com/images/art/cartooning/character-design/news-hound-cartoon-character.jpg")),
   
-  titlePanel("Little Assistant"),
+  titlePanel(h1("Little Assistant")),
   fluidRow(
     column(3, selectInput(inputId = "time", label = "How long have you been away from the world?",
                           c("one day" = 1, "one week" = 7, "one month" = 30))),
@@ -112,14 +124,19 @@ runApp(list(ui = fluidPage(
                                         "Business Day" = "Business Day", "Books" = "Books", "Art" = "Art")))
   ),
   sidebarLayout(
-    sidebarPanel(h1("Sports Section"),
+    sidebarPanel(
+                 h2("YouTube"),
+                 HTML(iframese),
+                 h2("Sports"),
                  a("@Complex_Sports", class="twitter-timeline",
-                   href = "https://twitter.com/Complex_Sports")
+                   href = "https://twitter.com/Complex_Sports",
+                   height = "750px"),
+                 hr()
     ), 
-    mainPanel(
+    mainPanel(h2("News"),
       DT::dataTableOutput('tbl'),
       hr(),
-      h1("Hot and Upcoming Movies"),
+      h2("Hot & Upcoming Movies"),
       carouselPanel(auto.advance=TRUE,
                     dataTableOutput("top"),
                     dataTableOutput("upcoming")
@@ -127,6 +144,7 @@ runApp(list(ui = fluidPage(
     ),
     position = "right"
   )
+
 ), 
 server = function(input, output, session){
   
@@ -139,15 +157,18 @@ server = function(input, output, session){
   top.movies <- top.content$results %>% na.omit %>% filter(original_language=='en') %>%
     select(title,release_date,backdrop_path,popularity) %>%
     transmute(`Hot Movies`=title, 
-              Released=nice.date(release_date),
-              Popularity=1:length(popularity)
-    )
+              Released=nice.date(as.Date(release_date)),
+              Popularity=1:length(popularity))
+  
   upcoming.movies <- upcoming.content$results %>% na.omit %>%
     select(title,release_date,backdrop_path,popularity) %>%
     transmute(`Upcoming Movies`=title, 
-              Coming=nice.date(release_date),
-              Popularity=1:length(popularity)
-    )
+              Coming=nice.date(as.Date(release_date)),
+              Popularity=1:length(popularity))
+  
+  
+  tmp <- fromJSON(paste0("https://www.googleapis.com/youtube/v3/videos?", #everything after '?' is parameters being passed, '&' separates the argument
+                         "part=snippet&chart=mostPopular&key=AIzaSyARX7-F4xQnLrSgUQi6MjAcpPcLtZwhkZY"))
   
   output$top <- renderDataTable(top.movies[1:8,], options = list(
     searching=FALSE,
@@ -163,6 +184,6 @@ server = function(input, output, session){
     section = input$section, time_period = input$time) %>% 
       select(section, title_link, abstract, published_date), escape = FALSE, options = list(lengthChange = FALSE))
   
-}
-)
+    }
+  )
 )

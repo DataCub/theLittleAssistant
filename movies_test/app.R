@@ -13,7 +13,7 @@ get_most_viewed <- function(section = "all-sections", time_period = 1, iteration
   
   for (i in 1:iterations) {
     
-    offset <- i * 20
+    offset <- i * 10
     
     # construct the URI
     uri_base <- paste0("http://api.nytimes.com/svc/mostpopular/v2/mostviewed/",section, "/", time_period)
