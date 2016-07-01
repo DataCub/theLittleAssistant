@@ -1,3 +1,4 @@
+library(DT)
 library(shiny)
 library(httr)
 library(dplyr)
@@ -12,10 +13,8 @@ library(ggplot2)
 library(tidyjson)
 library(data.table)
 library(shinythemes)
-library(DT)
 library(stringr)
 library(rvest)
-
 
 source("carouselPanel.R")
 
@@ -159,7 +158,7 @@ runApp(list(ui = fluidPage(
                  h5("Spotlight News"),
                  a("@Complex_Sports", class="twitter-timeline",
                    href = "https://twitter.com/Complex_Sports",
-                   height = "400px")
+                   height = "600px")
     ), 
     mainPanel(h2("News"),
       column(5, selectInput(inputId = "time", label = "How long have you been off the grid?",
@@ -180,7 +179,7 @@ runApp(list(ui = fluidPage(
       h5("Spicy Films & Groovy Jams"),
       carouselPanel(auto.advance=TRUE,
                     dataTableOutput("top"),
-                    #dataTableOutput("upcoming"),
+                    dataTableOutput("upcoming"),
                     dataTableOutput("songs")
       )
     ),
@@ -210,19 +209,19 @@ server = function(input, output, session){
               Popularity=1:length(popularity))
   
   #MUSIC
-  songs <- getTopX(10)
+  songs <- getTopX(15)
   output$songs <- renderDataTable(songs, options = list(
     searching=FALSE,
     info=FALSE,
     paging=FALSE))
   
   
-  output$top <- renderDataTable(top.movies[1:10,], options = list(
+  output$top <- renderDataTable(top.movies[1:15,], options = list(
     searching=FALSE,
     info=FALSE,
     paging=FALSE))
   
-  output$upcoming <- renderDataTable(upcoming.movies[1:8,], options = list(
+  output$upcoming <- renderDataTable(upcoming.movies[1:15,], options = list(
     searching=FALSE,
     info=FALSE,
     paging=FALSE))
